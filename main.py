@@ -10,54 +10,37 @@ random.seed(4800)
 
 
 if __name__ == '__main__':
+    # run a simulation of GA to analyze pareto-front
     sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1)
     sim.run(optimizers=['GA'], repeats=1, pareto=True)
 
+    # set global methods
     methods = ['GRASP', 'SA', 'GA', 'ABC', 'TABU', 'ALNS']
 
-    sim = Simulation()
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='NO STOCHASTICITY REGULAR')
+    # set configurations for each environment
+    scenarios = [
+        {"title": "NO STOCHASTICITY REGULAR", "config": {}},
+        {"title": "MEDIUM STOCHASTICITY REGULAR", "config": {"traffic_delay_rate": 0.1, "breakdown_rate": 0.002, "rest_delay_rate": 0.1}},
+        {"title": "HIGH STOCHASTICITY REGULAR", "config": {"traffic_delay_rate": 0.2, "breakdown_rate": 0.005, "rest_delay_rate": 0.3}},
+        {"title": "HIGH PRESSURE REGULAR", "config": {"traffic_delay_rate": 0.1, "breakdown_rate": 0.002, "rest_delay_rate": 0.1, "num_orders": 150}},
 
-    sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='MEDIUM STOCHASTICITY REGULAR')
+        {"title": "NO STOCHASTICITY SMALL", "config": {"env_size": 30, "num_orders": 50, "num_drivers": 5}},
+        {"title": "MEDIUM STOCHASTICITY SMALL", "config": {"traffic_delay_rate": 0.1, "breakdown_rate": 0.002, "rest_delay_rate": 0.1, "env_size": 30, "num_orders": 50, "num_drivers": 5}},
+        {"title": "HIGH STOCHASTICITY SMALL", "config": {"traffic_delay_rate": 0.2, "breakdown_rate": 0.005, "rest_delay_rate": 0.3, "env_size": 30, "num_orders": 50, "num_drivers": 5}},
+        {"title": "HIGH PRESSURE SMALL", "config": {"traffic_delay_rate": 0.1, "breakdown_rate": 0.002, "rest_delay_rate": 0.1, "env_size": 30, "num_orders": 75, "num_drivers": 5}},
 
-    sim = Simulation(traffic_delay_rate=0.2, breakdown_rate=0.005, rest_delay_rate=0.3)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='HIGH STOCHASTICITY REGULAR')
+        {"title": "NO STOCHASTICITY LARGE", "config": {"env_size": 70, "num_orders": 150, "num_drivers": 15}},
+        {"title": "MEDIUM STOCHASTICITY LARGE", "config": {"traffic_delay_rate": 0.1, "breakdown_rate": 0.002, "rest_delay_rate": 0.1, "env_size": 70, "num_orders": 150, "num_drivers": 15}},
+        {"title": "HIGH STOCHASTICITY LARGE", "config": {"traffic_delay_rate": 0.2, "breakdown_rate": 0.005, "rest_delay_rate": 0.3, "env_size": 70, "num_orders": 150, "num_drivers": 15}}
+    ]
 
-    sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1, num_orders=150)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='HIGH PRESSURE REGULAR')
+    # run all experiments
+    for item in scenarios:
+        print(f"Starting Scenario Execution: {item['title']}...")
 
-    sim = Simulation(env_size=30, num_orders=50, num_drivers=5)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='NO STOCHASTICITY SMALL')
-
-    sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1, env_size=30, num_orders=50, num_drivers=5)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='MEDIUM STOCHASTICITY SMALL')
-
-    sim = Simulation(traffic_delay_rate=0.2, breakdown_rate=0.005, rest_delay_rate=0.3, env_size=30, num_orders=50, num_drivers=5)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='HIGH STOCHASTICITY SMALL')
-
-    sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1, env_size=30, num_orders=75, num_drivers=5)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='HIGH PRESSURE SMALL')
-
-    sim = Simulation(env_size=70, num_orders=150, num_drivers=15)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='NO STOCHASTICITY LARGE')
-
-    sim = Simulation(traffic_delay_rate=0.1, breakdown_rate=0.002, rest_delay_rate=0.1, env_size=70, num_orders=150, num_drivers=15)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='MEDIUM STOCHASTICITY LARGE')
-
-    sim = Simulation(traffic_delay_rate=0.2, breakdown_rate=0.005, rest_delay_rate=0.3, env_size=70, num_orders=150, num_drivers=15)
-    sim.run(optimizers=methods, repeats=30)
-    sim.analysis(title='HIGH STOCHASTICITY LARGE')
+        sim = Simulation(**item['config'])
+        sim.run(optimizers=methods, repeats=30)
+        sim.analysis(title=item['title'])
 
     result_analysis()
 
